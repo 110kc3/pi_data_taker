@@ -27,16 +27,22 @@ def conv_aqi(pmt_2_5, pmt_10):
     return aqi_2_5, aqi_10
 
 def save_log():
-    with open("YOUR PATH HERE/air_quality.csv", "a") as log:
+    with open("/home/pi/pi_data_taker/air_quality.csv", "a") as log:
        date_time_now = datetime.now()
        log.write("{},{},{},{},{}\n".format(date_time_now, pmt_2_5, aqi_2_5,       pmt_10,aqi_10))
        log.close()
 
+def save_log_txt():
+    with open("/home/pi/pi_data_taker/air_quality.log", "a") as log:
+       date_time_now = datetime.now()
+       log.write("{},{},{},{},{}\n".format(date_time_now, pmt_2_5, aqi_2_5,       pmt_10,aqi_10))
+       log.close()	   
+	   
 while(True): 
     pmt_2_5, pmt_10 = get_data()
     aqi_2_5, aqi_10 = conv_aqi(pmt_2_5, pmt_10)
     try:
-        save_log()
+        save_log_txt()
     except:
         print ("[INFO] Failure in logging data") 
     time.sleep(60)

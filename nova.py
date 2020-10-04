@@ -22,20 +22,18 @@ def get_data(n=3):
     sensor.sleep(sleep=True)
     time.sleep(2)
     return pmt_2_5, pmt_10
-	
+
 def conv_aqi(pmt_2_5, pmt_10):
     aqi_2_5 = aqi.to_iaqi(aqi.POLLUTANT_PM25, str(pmt_2_5))
     aqi_10 = aqi.to_iaqi(aqi.POLLUTANT_PM10, str(pmt_10))
     return aqi_2_5, aqi_10
 
-	
 def save_log(): 
     with open("YOUR PATH HERE/air_quality.csv", "a") as log:
     dt = datetime.now()
     log.write("{},{},{},{},{}\n".format(dt, pmt_2_5, aqi_2_5,       pmt_10,aqi_10))
     log.close()
 
-	
 while(True): 
     pmt_2_5, pmt_10 = get_data()
     aqi_2_5, aqi_10 = conv_aqi(pmt_2_5, pmt_10)

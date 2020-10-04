@@ -1,7 +1,5 @@
 import time
 from datetime import datetime
-import paho.mqtt.publish as publish
-import psutil
 from SDS011_library import *
 import aqi
 
@@ -28,11 +26,11 @@ def conv_aqi(pmt_2_5, pmt_10):
     aqi_10 = aqi.to_iaqi(aqi.POLLUTANT_PM10, str(pmt_10))
     return aqi_2_5, aqi_10
 
-def save_log(): 
+def save_log():
     with open("YOUR PATH HERE/air_quality.csv", "a") as log:
-    dt = datetime.now()
-    log.write("{},{},{},{},{}\n".format(dt, pmt_2_5, aqi_2_5,       pmt_10,aqi_10))
-    log.close()
+       date_time_now = datetime.now()
+       log.write("{},{},{},{},{}\n".format(date_time_now, pmt_2_5, aqi_2_5,       pmt_10,aqi_10))
+       log.close()
 
 while(True): 
     pmt_2_5, pmt_10 = get_data()

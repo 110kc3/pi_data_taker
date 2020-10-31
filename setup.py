@@ -4,3 +4,9 @@
 
 #need dht11 library for taking temp+humid data
 #sudo pip3 install Adafruit_DHT
+
+
+# for nova pm sensor
+# pip3 install pyserial
+#
+#

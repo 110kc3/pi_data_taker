@@ -137,7 +137,7 @@ try:
         while True:
             last1 = time.time()
             values = sensor.get_values()
-            pm25, pm10 = values
+            pm10, pm25 = values
             print('pm25 and pm10: ', pm25, pm10)
 
             if values is not None:
@@ -150,10 +150,14 @@ try:
         sensor.workstate = SDS011.WorkStates.Sleeping
         time.sleep(5)
 
-    # end of test
-    print("\nSensor reset to normal")
-    sensor.reset()
-    sensor = None
+    # # end of test
+    # print("\nSensor reset to normal")
+    # sensor.reset()
+    # sensor = None
+
+    print('\nSetting sensor to sleep mode cuz running fan annoys me')
+    sensor.workstate = SDS011.WorkStates.Sleeping
+
 except KeyboardInterrupt:
     sensor.reset()
     sensor = None

@@ -5,15 +5,24 @@ import http.server
 import socketserver
 import json
 
-# import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO - DHT11
 import Adafruit_DHT
 import time
 
 
+# NOVA SENSOR
+from datetime import datetime
+from SDS011_library import *
+import aqi
+
+sensor = SDS011("/dev/ttyUSB0", use_query_mode=True)
+
+
+# DTH11 SENSOR
 # Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
 DHTSensor = Adafruit_DHT.DHT11
 
-# The pin which is connected with the sensor will be declared here
+# The pin which is connected with the dht11 sensor will be declared here
 GPIO_DHT_Pin = 27  # look at output of "python3 pinout" command
 
 
@@ -26,6 +35,8 @@ def get_DHT11():
         return humidity, temperature
     else:
         print("Sensor failure...")
+
+#############################################
 
 
 class MyHandler(http.server.BaseHTTPRequestHandler):
@@ -142,6 +153,8 @@ def signal_handler(signal, frame):
 
 # Install the keyboard interrupt handler
 signal.signal(signal.SIGINT, signal_handler)
+
+print('Server started at:', server, port)
 
 # Now loop forever
 try:

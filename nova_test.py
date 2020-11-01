@@ -33,7 +33,7 @@ def printlog(level, string):
 
 
 debug = 0       # debug level in sds011 class module
-cycles = 4      # serial read timeout in seconds, dflt 2
+cycles = 2      # serial read timeout in seconds, dflt 2
 timeout = 1     # timeout on serial line read
 # print values in mass or pieces
 unit_of_measure = SDS011.UnitsOfMeasure.MassConcentrationEuropean
@@ -93,7 +93,6 @@ def printValues(timing, values, unit_of_measure):
         unit = 'pcs/0.01cft'
     print("Waited %d secs\nValues measured in %s:    PM2.5  " %
           (timing, unit), values[1], ", PM10 ", values[0])
-    # print("Values measured in pcs/0.01sqf: PM2.5 %d, PM10 %d" % (Mass2Con('pm25',values[1]), Mass2Con('pm10',values[0])))
 
 
 # simple parsing the command arguments for setting options
@@ -138,6 +137,9 @@ try:
         while True:
             last1 = time.time()
             values = sensor.get_values()
+            pm25, pm10 = values
+            print('pm25 and pm10: ', pm25, pm10)
+
             if values is not None:
                 printValues(time.time() - last, values, sensor.unit_of_measure)
                 break

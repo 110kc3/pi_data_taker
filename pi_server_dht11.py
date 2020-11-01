@@ -5,7 +5,7 @@ import http.server
 import socketserver
 import json
 
-#import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import Adafruit_DHT
 import time
 
@@ -30,8 +30,6 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
 
-        humidity, temperature = get_DHT11()  # unpacking tuple
-        print(humidity, temperature)
         # message in json to send when gotten GET request
         message = {
             "name": "John",
@@ -49,8 +47,53 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
         # for later - answers with localhost:port/agent
         if self.path == '/agent':
-
             message = self.headers['user-agent']
+
+        if self.path == '/data':
+
+            humidity, temperature = get_DHT11()  # unpacking tuple
+            print(humidity, temperature)
+
+            message = {
+                "current": {
+                    "indexes": [
+                        {
+                            "value": 45.91,
+                            "color": "#D1CF1E",
+                            "advice": "Take a breath!",
+                            "name": "AIRLY_CAQI",
+                            "description": "Air is quite good.",
+                            "level": "LOW"
+                        }
+                    ],
+                    "values": [
+                        {
+                            "name": "PM1",
+                            "value": 17.45
+                        },
+                        {
+                            "value": 27.55,
+                            "name": "PM25"
+                        },
+                        {
+                            "value": 42.95,
+                            "name": "PM10"
+                        },
+                        {
+                            "value": 1016.45,
+                            "name": "PRESSURE"
+                        },
+                        {
+                            "value": humidity,
+                            "name": "HUMIDITY"
+                        },
+                        {
+                            "value": temperature,
+                            "name": "TEMPERATURE"
+                        }
+                    ]
+                }
+            }
 
         self.send_header('Content-type', 'text/html')
         self.end_headers()

@@ -156,7 +156,7 @@ try:
     # sensor = None
 
     print('\nSetting sensor to sleep mode cuz running fan annoys me')
-    sensor.workstate = SDS011.WorkStates.Sleeping
+    # sensor.workstate = SDS011.WorkStates.Sleeping #sensor is already sleeping after last iteration
 
 except KeyboardInterrupt:
     sensor.reset()

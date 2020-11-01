@@ -10,14 +10,6 @@ import Adafruit_DHT
 import time
 
 
-# NOVA SENSOR
-from datetime import datetime
-from SDS011_library import *
-import aqi
-
-sensor = SDS011("/dev/ttyUSB0", use_query_mode=True)
-
-
 # DTH11 SENSOR
 # Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
 DHTSensor = Adafruit_DHT.DHT11
@@ -63,6 +55,14 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             message = self.headers['user-agent']
 
         if self.path == '/data':
+
+            pmt_2_5, pmt_10 = get_data()
+            aqi_2_5, aqi_10 = conv_aqi(pmt_2_5, pmt_10)
+            try:
+                save_log_txt()
+            except:
+                print("[INFO] Failure in logging data")
+            time.sleep(60)
 
             humidity, temperature = get_DHT11()  # unpacking tuple
             print(humidity, temperature)

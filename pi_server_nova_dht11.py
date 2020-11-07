@@ -35,6 +35,38 @@ def get_DHT11():
 #############################################
 
 
+debug = 0       # debug level in sds011 class module
+cycles = 1      # serial read timeout in seconds, dflt 2
+timeout = 1     # timeout on serial line read
+# print values in mass or pieces
+unit_of_measure = SDS011.UnitsOfMeasure.MassConcentrationEuropean
+
+com_port = '/dev/ttyUSB0'
+
+if debug > 0:
+    # Activate simple logging
+    import logging
+    import logging.handlers
+    logger = logging.getLogger()
+    # Available levels are the well known
+    # logging.INFO, logging.WARNING and so forth.
+    # Between INFO (=20)and DEBUG (=10) are fine grained
+    # messages with levels 14,16 and 18. You might want
+    # to use these values. Here is an Example with 16
+    # logger.setLevel(16)
+    # Activate simple logging
+    logger.setLevel(debug)
+
+
+def printValues(timing, values, unit_of_measure):
+    if unit_of_measure == SDS011.UnitsOfMeasure.MassConcentrationEuropean:
+        unit = 'µg/m³'
+    else:
+        unit = 'pcs/0.01cft'
+    print("Waited %d secs\nValues measured in %s:    PM2.5  " %
+          (timing, unit), values[1], ", PM10 ", values[0])
+
+
 # simple parsing the command arguments for setting options
 # Create an instance of your sensor
 # options defaults: logging None, debug level 0, serial line timeout 2

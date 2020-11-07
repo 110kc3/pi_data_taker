@@ -142,7 +142,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
                     print('\nSetting sensor to sleep mode cuz running fan annoys me')
                     sensor.workstate = SDS011.WorkStates.Sleeping
-                    time.sleep(5)
+                    time.sleep(0.5)
 
                 # # end of test
                 # print("\nSensor reset to normal")

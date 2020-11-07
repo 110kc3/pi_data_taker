@@ -196,10 +196,10 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                     "indexes": [
                         {
                             "stationcity": "Gliwice",
-                            "color": "#D1CF1E",
+                            "color": color,
                             "advice": "Take a breath!",
                             "name": "AIRLY_CAQI",
-                            "description": "Air is quite good.",
+                            "description": description,
                             "level": "LOW"
                         }
                     ],

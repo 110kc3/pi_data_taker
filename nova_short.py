@@ -33,7 +33,7 @@ def printlog(level, string):
 
 
 debug = 0       # debug level in sds011 class module
-cycles = 2      # serial read timeout in seconds, dflt 2
+cycles = 1      # serial read timeout in seconds, dflt 2
 timeout = 1     # timeout on serial line read
 # print values in mass or pieces
 unit_of_measure = SDS011.UnitsOfMeasure.MassConcentrationEuropean
@@ -92,6 +92,8 @@ print(sensor.reportmode)
 #             printValues(0, values, sensor.unit_of_measure)
 #             break
 
+pm10, pm25 = 0
+
 try:
     # Example of switching the WorkState
     print("\n%d X switching between measuring and sleeping mode:" % cycles)
@@ -116,7 +118,10 @@ try:
             print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
                 time.time() - last1))
             time.sleep(2)
-        print("Read was succesfull. Going to sleep for 5 seconds")
+
+        print('Final values: ', pm10, pm25)
+
+        print('\nSetting sensor to sleep mode cuz running fan annoys me')
         sensor.workstate = SDS011.WorkStates.Sleeping
         time.sleep(5)
 
@@ -124,8 +129,8 @@ try:
     # print("\nSensor reset to normal")
     # sensor.reset()
     # sensor = None
+    print('Final values: ', pm10, pm25)
 
-    print('\nSetting sensor to sleep mode cuz running fan annoys me')
     # sensor.workstate = SDS011.WorkStates.Sleeping #sensor is already sleeping after last iteration
 
 except KeyboardInterrupt:

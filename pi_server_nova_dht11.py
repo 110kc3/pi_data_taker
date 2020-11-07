@@ -67,20 +67,6 @@ def printValues(timing, values, unit_of_measure):
           (timing, unit), values[1], ", PM10 ", values[0])
 
 
-# simple parsing the command arguments for setting options
-# Create an instance of your sensor
-# options defaults: logging None, debug level 0, serial line timeout 2
-# option unit_of_measure (default False) values in pcs/0.01sqf or mass ug/m3
-sensor = SDS011(com_port, timeout=timeout, unit_of_measure=unit_of_measure)
-# raise KeyboardInterrupt
-# Now we have some details about it
-print("SDS011 sensor info:")
-print("Device ID: ", sensor.device_id)
-print("Device firmware: ", sensor.firmware)
-print("Current device cycle (0 is permanent on): ", sensor.dutycycle)
-print(sensor.workstate)
-print(sensor.reportmode)
-
 pm10 = 0
 pm25 = 0
 
@@ -109,6 +95,20 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             message = self.headers['user-agent']
 
         if self.path == '/data':
+            # simple parsing the command arguments for setting options
+            # Create an instance of your sensor
+            # options defaults: logging None, debug level 0, serial line timeout 2
+            # option unit_of_measure (default False) values in pcs/0.01sqf or mass ug/m3
+            sensor = SDS011(com_port, timeout=timeout,
+                            unit_of_measure=unit_of_measure)
+            # raise KeyboardInterrupt
+            # Now we have some details about it
+            print("SDS011 sensor info:")
+            print("Device ID: ", sensor.device_id)
+            print("Device firmware: ", sensor.firmware)
+            print("Current device cycle (0 is permanent on): ", sensor.dutycycle)
+            print(sensor.workstate)
+            print(sensor.reportmode)
 
             try:
                 # Example of switching the WorkState

@@ -92,7 +92,8 @@ print(sensor.reportmode)
 #             printValues(0, values, sensor.unit_of_measure)
 #             break
 
-pm10, pm25 = 0
+pm10 = 0
+pm25 = 0
 
 try:
     # Example of switching the WorkState

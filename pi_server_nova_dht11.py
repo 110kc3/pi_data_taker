@@ -163,7 +163,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 "current": {
                     "indexes": [
                         {
-                            "value": 45.91,
+                            "stationcity": "Gliwice",
                             "color": "#D1CF1E",
                             "advice": "Take a breath!",
                             "name": "AIRLY_CAQI",

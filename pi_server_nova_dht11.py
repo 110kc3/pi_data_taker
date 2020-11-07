@@ -77,16 +77,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
         # message in json to send when gotten GET request
         message = {
-            "name": "John",
-            "age": 30,
-            "married": True,
-            "divorced": False,
-            "children": ("Ann", "Billy"),
-            "pets": None,
-            "cars": [
-                {"model": "BMW 230", "mpg": 27.5},
-                {"model": "Ford Edge", "mpg": 24.1}
-            ]
+            "response": "successul",
         }
         self.send_response(200)
 
@@ -189,13 +180,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 description = "Very Unhealthy air"
 
             if pm25 > 200:
-                color = "#00E400"
+                color = "#990000"
                 description = "Hazardous air"
-
-            # good = pm10 in range(0, 50)
-            # if good is true:
-            #     color = "#00E400"
-            #     description = "Good"
 
             message = {
                 "current": {

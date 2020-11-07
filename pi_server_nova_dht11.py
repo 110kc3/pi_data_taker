@@ -5,6 +5,10 @@ import http.server
 import socketserver
 import json
 
+# NOVA sensor
+from sds011 import SDS011
+
+
 # import RPi.GPIO as GPIO - DHT11
 import Adafruit_DHT
 import time
@@ -29,6 +33,24 @@ def get_DHT11():
         print("Sensor failure...")
 
 #############################################
+
+
+# simple parsing the command arguments for setting options
+# Create an instance of your sensor
+# options defaults: logging None, debug level 0, serial line timeout 2
+# option unit_of_measure (default False) values in pcs/0.01sqf or mass ug/m3
+sensor = SDS011(com_port, timeout=timeout, unit_of_measure=unit_of_measure)
+# raise KeyboardInterrupt
+# Now we have some details about it
+print("SDS011 sensor info:")
+print("Device ID: ", sensor.device_id)
+print("Device firmware: ", sensor.firmware)
+print("Current device cycle (0 is permanent on): ", sensor.dutycycle)
+print(sensor.workstate)
+print(sensor.reportmode)
+
+pm10 = 0
+pm25 = 0
 
 
 class MyHandler(http.server.BaseHTTPRequestHandler):
@@ -56,16 +78,54 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
         if self.path == '/data':
 
-            pmt_2_5, pmt_10 = get_data()
-            aqi_2_5, aqi_10 = conv_aqi(pmt_2_5, pmt_10)
             try:
-                save_log_txt()
-            except:
-                print("[INFO] Failure in logging data")
-            time.sleep(60)
+                # Example of switching the WorkState
+                print("\n%d X switching between measuring and sleeping mode:" % cycles)
+                print(
+                    "\tMeasurement state: Read the values, on no read, wait 2 seconds and try again")
+                print(
+                    "\tOn read success, put the mode into sleeping mode for 5 seconds, and loop again")
+                for a in range(cycles):
+                    print("%d time: push it into wake state" % a)
+                    sensor.workstate = SDS011.WorkStates.Measuring
+                    # Just to demonstrate. Should be 60 seconds to get qualified values.
+                    # The sensor needs to warm up!
+                    time.sleep(10)
+                    last = time.time()
+                    while True:
+                        last1 = time.time()
+                        values = sensor.get_values()
+                        pm10, pm25 = values
+                        print('pm25 and pm10: ', pm25, pm10)
+
+                        if values is not None:
+                            printValues(time.time() - last, values,
+                                        sensor.unit_of_measure)
+                            break
+                        print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
+                            time.time() - last1))
+                        time.sleep(2)
+
+                    print('pm25 and pm10: ', pm25, pm10)
+
+                    print('\nSetting sensor to sleep mode cuz running fan annoys me')
+                    sensor.workstate = SDS011.WorkStates.Sleeping
+                    time.sleep(5)
+
+                # # end of test
+                # print("\nSensor reset to normal")
+                # sensor.reset()
+                # sensor = None
+                print('pm25 and pm10: ', pm25, pm10)
+
+                # sensor.workstate = SDS011.WorkStates.Sleeping #sensor is already sleeping after last iteration
+            except KeyboardInterrupt:
+                sensor.reset()
+                sensor = None
+                sys.exit("Nova Sensor reset due to a KeyboardInterrupt")
 
             humidity, temperature = get_DHT11()  # unpacking tuple
-            print(humidity, temperature)
+            print('Humidity and temp:', humidity, temperature)
 
             message = {
                 "current": {
@@ -82,18 +142,18 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                     "values": [
                         {
                             "name": "PM1",
-                            "value": 17.45
+                            "value": 10
                         },
                         {
-                            "value": 27.55,
+                            "value": pm25,
                             "name": "PM25"
                         },
                         {
-                            "value": 42.95,
+                            "value": pm10,
                             "name": "PM10"
                         },
                         {
-                            "value": 1016.45,
+                            "value": 1000,
                             "name": "PRESSURE"
                         },
                         {

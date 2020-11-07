@@ -120,7 +120,7 @@ try:
                 time.time() - last1))
             time.sleep(2)
 
-        print('Final values: ', pm10, pm25)
+        print('pm25 and pm10: ', pm25, pm10)
 
         print('\nSetting sensor to sleep mode cuz running fan annoys me')
         sensor.workstate = SDS011.WorkStates.Sleeping
@@ -130,7 +130,7 @@ try:
     # print("\nSensor reset to normal")
     # sensor.reset()
     # sensor = None
-    print('Final values: ', pm10, pm25)
+    print('pm25 and pm10: ', pm25, pm10)
 
     # sensor.workstate = SDS011.WorkStates.Sleeping #sensor is already sleeping after last iteration
 

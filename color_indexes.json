@@ -1,0 +1,222 @@
+[
+   {
+      "name" : "US_AQI",
+      "levels" : [
+         {
+            "color" : "#00E400",
+            "description" : "Good",
+            "maxValue" : 50,
+            "values" : "0-50",
+            "minValue" : 0,
+            "level" : "GOOD"
+         },
+         {
+            "minValue" : 51,
+            "level" : "MODERATE",
+            "color" : "#FFFF00",
+            "values" : "51-100",
+            "maxValue" : 100,
+            "description" : "Moderate"
+         },
+         {
+            "level" : "UNHEALTHY_FOR_SENSITIVE_GROUPS",
+            "minValue" : 101,
+            "color" : "#FF7E00",
+            "description" : "Unhealthy for Sensitive Groups",
+            "maxValue" : 150,
+            "values" : "101-150"
+         },
+         {
+            "level" : "UNHEALTHY",
+            "minValue" : 151,
+            "values" : "151-200",
+            "maxValue" : 200,
+            "description" : "Unhealthy",
+            "color" : "#F00000"
+         },
+         {
+            "color" : "#8F3F97",
+            "maxValue" : 300,
+            "description" : "Very Unhealthy",
+            "values" : "201-300",
+            "level" : "VERY_UNHEALTHY",
+            "minValue" : 201
+         },
+         {
+            "color" : "#7E0023",
+            "description" : "Hazardous",
+            "maxValue" : 500,
+            "values" : "301-500",
+            "level" : "HAZARDOUS",
+            "minValue" : 301
+         },
+         {
+            "color" : "#7E0023",
+            "values" : "501+",
+            "description" : "Beyond The AQI",
+            "maxValue" : null,
+            "minValue" : 501,
+            "level" : "BEYOND_AQI"
+         }
+      ]
+   },
+   {
+      "levels" : [
+         {
+            "color" : "#57B108",
+            "description" : "Very Good",
+            "maxValue" : 1,
+            "values" : "0-1",
+            "minValue" : 0,
+            "level" : "VERY_GOOD"
+         },
+         {
+            "values" : "1-3",
+            "maxValue" : 3,
+            "description" : "Good",
+            "color" : "#B0DD10",
+            "level" : "GOOD",
+            "minValue" : 1
+         },
+         {
+            "color" : "#FFD911",
+            "description" : "Moderate",
+            "maxValue" : 5,
+            "values" : "3-5",
+            "minValue" : 3,
+            "level" : "MODERATE"
+         },
+         {
+            "color" : "#E58100",
+            "values" : "5-7",
+            "description" : "Satisfactory",
+            "maxValue" : 7,
+            "minValue" : 5,
+            "level" : "SATISFACTORY"
+         },
+         {
+            "maxValue" : 10,
+            "description" : "Bad",
+            "values" : "7-10",
+            "color" : "#E50000",
+            "minValue" : 7,
+            "level" : "BAD"
+         },
+         {
+            "level" : "VERY_BAD",
+            "minValue" : 10,
+            "color" : "#990000",
+            "description" : "Very Bad",
+            "maxValue" : null,
+            "values" : "10+"
+         }
+      ],
+      "name" : "PIJP"
+   },
+   {
+      "levels" : [
+         {
+            "minValue" : 0,
+            "level" : "VERY_LOW",
+            "maxValue" : 25,
+            "description" : "Very Low",
+            "values" : "0-25",
+            "color" : "#79BC6A"
+         },
+         {
+            "color" : "#B9CE45",
+            "values" : "25-50",
+            "description" : "Low",
+            "maxValue" : 50,
+            "level" : "LOW",
+            "minValue" : 25
+         },
+         {
+            "level" : "MEDIUM",
+            "minValue" : 50,
+            "maxValue" : 75,
+            "description" : "Medium",
+            "values" : "50-75",
+            "color" : "#EDC100"
+         },
+         {
+            "color" : "#F69208",
+            "values" : "75-100",
+            "description" : "High",
+            "maxValue" : 100,
+            "level" : "HIGH",
+            "minValue" : 75
+         },
+         {
+            "level" : "VERY_HIGH",
+            "minValue" : 100,
+            "color" : "#960018",
+            "description" : "Very High",
+            "maxValue" : null,
+            "values" : "100+"
+         }
+      ],
+      "name" : "CAQI"
+   },
+   {
+      "levels" : [
+         {
+            "color" : "#6BC926",
+            "maxValue" : 25,
+            "description" : "Very Low",
+            "values" : "0-25",
+            "level" : "VERY_LOW",
+            "minValue" : 0
+         },
+         {
+            "maxValue" : 50,
+            "description" : "Low",
+            "values" : "25-50",
+            "color" : "#D1CF1E",
+            "minValue" : 25,
+            "level" : "LOW"
+         },
+         {
+            "values" : "50-75",
+            "description" : "Medium",
+            "maxValue" : 75,
+            "color" : "#EFBB0F",
+            "level" : "MEDIUM",
+            "minValue" : 50
+         },
+         {
+            "color" : "#EF7120",
+            "values" : "75-87.5",
+            "maxValue" : 87.5,
+            "description" : "High",
+            "minValue" : 75,
+            "level" : "HIGH"
+         },
+         {
+            "maxValue" : 100,
+            "description" : "Very High",
+            "values" : "87.5-100",
+            "color" : "#EF2A36",
+            "level" : "VERY_HIGH",
+            "minValue" : 87.5
+         },
+         {
+            "color" : "#B00057",
+            "maxValue" : 125,
+            "description" : "Extreme",
+            "values" : "100-125",
+            "level" : "EXTREME",
+            "minValue" : 100
+         },
+         {
+            "minValue" : 125,
+            "level" : "AIRMAGEDDON",
+            "description" : "Airmageddon!",
+            "maxValue" : null,
+            "values" : "125+",
+            "color" : "#770078"
+         }
+      ],
+      "name" : "AIRLY_CAQI"
+   }
+]

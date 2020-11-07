@@ -159,6 +159,38 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             humidity, temperature = get_DHT11()  # unpacking tuple
             print('Humidity and temp:', humidity, temperature)
 
+            color = "#00E400"
+            description = "Good"
+
+            if pm25 >= 0 and pm25 <= 37
+            color = "#00E400"
+            description = "Good air"
+
+            if pm25 > 37 and pm25 <= 61
+            color = "#FFFF00"
+            description = "Moderate air"
+
+            if pm25 > 61 and pm25 <= 85
+            color = "#FF7E00"
+            description = "Unhealthy air for Sensitive Groups"
+
+            if pm25 > 85 and pm25 <= 121
+            color = "#ff3300"
+            description = "Unhealthy air"
+
+            if pm25 > 121 and pm25 <= 200
+            color = "#ff0000"
+            description = "Very Unhealthy air"
+
+            if pm25 > 200
+            color = "#00E400"
+            description = "Hazardous air"
+
+            # good = pm10 in range(0, 50)
+            # if good is true:
+            #     color = "#00E400"
+            #     description = "Good"
+
             message = {
                 "current": {
                     "indexes": [

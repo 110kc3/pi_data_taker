@@ -156,8 +156,14 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 sensor = None
                 sys.exit("Nova Sensor reset due to a KeyboardInterrupt")
 
-            humidity, temperature = get_DHT11()  # unpacking tuple
-            print('Humidity and temp:', humidity, temperature)
+            try:
+                humidity, temperature = get_DHT11()  # unpacking tuple
+                print('Humidity and temp:', humidity, temperature)
+            except:
+                print(
+                    "An exception occurred with reading humidity and temperature with DHT11")
+                humidity = 55
+                temperature = 25
 
             color = "#00E400"
             description = "Good"

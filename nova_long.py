@@ -126,11 +126,17 @@ print(sensor.reportmode)
 sensor.reset()
 pm10 = 0
 pm25 = 0
+time_before_measurement = 0
+time_between_measurements = 0
 
 with open('measures_file.csv', mode='w') as measures_file:
     measures_writer = csv.writer(
         measures_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    measures_writer.writerow(['Time', 'pm10', 'pm25', unit_of_measure])
+    measures_writer.writerow(
+        ['time_before_measurement', 'time_between_measurements',  'pm10 [µg/m³]', 'pm2.5 [µg/m³]'])
+
+    time_before_measurement = 5
+    time_between_measurements = 10
     try:
         # Example of switching the WorkState
         print("\n%d X switching between measuring and sleeping mode:" % cycles)
@@ -142,7 +148,7 @@ with open('measures_file.csv', mode='w') as measures_file:
             sensor.workstate = SDS011.WorkStates.Measuring
             # Just to demonstrate. Should be 60 seconds to get qualified values.
             # The sensor needs to warm up!
-            time.sleep(2)
+            time.sleep(time_before_measurement)
             last = time.time()
             while True:
                 last1 = time.time()
@@ -153,15 +159,16 @@ with open('measures_file.csv', mode='w') as measures_file:
                     pm10, pm25 = values
 
                     measures_writer.writerow(
-                        [time.time() - last, pm10, pm25, sensor.unit_of_measure])
+                        [time_before_measurement, time_between_measurements, pm10, pm25, ])
 
                     break
                 print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
                     time.time() - last1))
                 time.sleep(0.5)
-            print("Read was succesfull. Going to sleep for 5 seconds")
+            print("Read was succesfull. Going to sleep for {} seconds",
+                  time_between_measurements)
             sensor.workstate = SDS011.WorkStates.Sleeping
-            time.sleep(5)
+            time.sleep(time_between_measurements-0.5)
 
         sensor.workstate = SDS011.WorkStates.Sleeping
 

@@ -164,7 +164,7 @@ time_before_measurement = 0
 time_between_measurements = 0
 
 
-measurements_rate = 6
+measurements_rate = 20
 
 
 pub_temperature = 0
@@ -182,13 +182,7 @@ with open('measures_file.csv', mode='w') as measures_file:
 
     for x in range(measurements_rate):
 
-        time_before_measurement = (x+1)*2.5
-        if x == 4:
-            time_before_measurement = (x+1)*5
-        if x == 5:
-            time_before_measurement = (x+1)*10
-        if x == 6:
-            time_before_measurement = (x+1)*20
+        time_before_measurement = 10
         time_between_measurements = 120
         try:
 

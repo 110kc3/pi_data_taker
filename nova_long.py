@@ -33,7 +33,7 @@ def printlog(level, string):
 
 
 debug = 0       # debug level in sds011 class module
-cycles = 4      # serial read timeout in seconds, dflt 2
+cycles = 3      # serial read timeout in seconds, dflt 2
 timeout = 2     # timeout on serial line read
 # print values in mass or pieces
 unit_of_measure = SDS011.UnitsOfMeasure.MassConcentrationEuropean
@@ -129,48 +129,60 @@ pm25 = 0
 time_before_measurement = 0
 time_between_measurements = 0
 
+
+measurements_rate = 6
+
 with open('measures_file.csv', mode='w') as measures_file:
     measures_writer = csv.writer(
         measures_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    measures_writer.writerow(
-        ['time_before_measurement', 'time_between_measurements',  'pm10 [µg/m³]', 'pm2.5 [µg/m³]'])
+    measures_writer.writerow(['Time before measurement [s]',
+                              'Time between measurements [s]',  'pm10 [µg/m^3]', 'pm2.5 [µg/m^3]'])
 
-    time_before_measurement = 5
-    time_between_measurements = 10
-    try:
-        # Example of switching the WorkState
-        print("\n%d X switching between measuring and sleeping mode:" % cycles)
-        print(
-            "\tMeasurement state: Read the values, on no read, wait 2 seconds and try again")
-        print("\tOn read success, put the mode into sleeping mode for 5 seconds, and loop again")
-        for a in range(cycles):
-            print("%d time: push it into wake state" % a)
-            sensor.workstate = SDS011.WorkStates.Measuring
-            # Just to demonstrate. Should be 60 seconds to get qualified values.
-            # The sensor needs to warm up!
-            time.sleep(time_before_measurement)
-            last = time.time()
-            while True:
-                last1 = time.time()
-                values = sensor.get_values()
-                if values is not None:
-                    printValues(time.time() - last, values,
-                                sensor.unit_of_measure)
-                    pm10, pm25 = values
+    for x in range(measurements_rate):
 
-                    measures_writer.writerow(
-                        [time_before_measurement, time_between_measurements, pm10, pm25, ])
+        time_before_measurement = (x+1)*2.5
+        if x == 4:
+            time_before_measurement = (x+1)*5
+        if x == 5:
+            time_before_measurement = (x+1)*10
+        if x == 6:
+            time_before_measurement = (x+1)*20
+        time_between_measurements = 120
+        try:
 
-                    break
-                print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
-                    time.time() - last1))
-                time.sleep(0.5)
-            print("Read was succesfull. Going to sleep for {} seconds",
-                  time_between_measurements)
-            sensor.workstate = SDS011.WorkStates.Sleeping
-            time.sleep(time_between_measurements-0.5)
+            print("\n%d X switching between measuring and sleeping mode:" % cycles)
+            print(
+                "\tMeasurement state: Read the values, on no read, wait 2 seconds and try again")
+            print(
+                "\tOn read success, put the mode into sleeping mode for 5 seconds, and loop again")
+            for a in range(cycles):
+                print("%d time: push it into wake state" % a)
+                sensor.workstate = SDS011.WorkStates.Measuring
+                # Just to demonstrate. Should be 60 seconds to get qualified values.
+                # The sensor needs to warm up!
+                time.sleep(time_before_measurement)
+                last = time.time()
+                while True:
+                    last1 = time.time()
+                    values = sensor.get_values()
+                    if values is not None:
+                        printValues(time.time() - last, values,
+                                    sensor.unit_of_measure)
+                        pm10, pm25 = values
 
-        sensor.workstate = SDS011.WorkStates.Sleeping
+                        measures_writer.writerow(
+                            [time_before_measurement, time_between_measurements, pm10, pm25, ])
+
+                        break
+                    print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
+                        time.time() - last1))
+                    time.sleep(0.5)
+                print("Read was succesfull. Going to sleep for " +
+                      time_between_measurements+" seconds",)
+                sensor.workstate = SDS011.WorkStates.Sleeping
+                time.sleep(time_between_measurements-0.5)
+
+        # sensor.workstate = SDS011.WorkStates.Sleeping
 
     except KeyboardInterrupt:
         sensor.reset()

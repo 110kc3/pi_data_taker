@@ -165,9 +165,9 @@ with open('measures_file.csv', mode='w') as measures_file:
 
         sensor.workstate = SDS011.WorkStates.Sleeping
 
-except KeyboardInterrupt:
-    sensor.reset()
-    sensor = None
-    sys.exit("Sensor reset due to a KeyboardInterrupt")
+    except KeyboardInterrupt:
+        sensor.reset()
+        sensor = None
+        sys.exit("Sensor reset due to a KeyboardInterrupt")
 
 print("Finished test")

@@ -12,14 +12,14 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 '''
+import Adafruit_DHT
 import sys
 import time
 from sds011 import SDS011
 import csv
 import requests
 
-import datetime
-
+from datetime import datetime
 import json
 
 
@@ -30,6 +30,26 @@ On the Pi make sure the login getty() is not using the serial interface.
 Have a look at Win or Linux documentation.
 Look e.g. via lsusb command for Qin Hen Electronics USB id.
 '''
+
+# import RPi.GPIO as GPIO
+
+
+# Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
+DHTSensor = Adafruit_DHT.DHT11
+
+# The pin which is connected with the sensor will be declared here
+GPIO_DHT_Pin = 27  # look at output of "python3 pinout" command
+
+
+def get_DHT11():
+    humidity, temperature = Adafruit_DHT.read(DHTSensor, GPIO_DHT_Pin)
+    if humidity is not None and temperature is not None:
+        print("Temperature={0:0.1f}C  Humidity={1:0.1f}%".format(
+            temperature, humidity))
+        time.sleep(0.3)
+        return humidity, temperature
+    else:
+        print("Sensor failure...")
 
 
 def printlog(level, string):
@@ -146,11 +166,19 @@ time_between_measurements = 0
 
 measurements_rate = 6
 
+
+pub_temperature = 0
+pub_humidity = 0
+pub_pm2_5 = 0
+pub_pm10 = 0
+humidity = 0
+temperature = 0
+
 with open('measures_file.csv', mode='w') as measures_file:
     measures_writer = csv.writer(
         measures_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    measures_writer.writerow(['Time before measurement [s]',
-                              'Time between measurements [s]',  'Station pm10 [µg/m^3]', 'Station pm2.5 [µg/m^3]', "Public station pm10 [µg/m^3]", "Public station pm2.5 [µg/m^3]"])
+    measures_writer.writerow(['Time now', 'Time before measurement [s]', 'Time between measurements [s]', 'Station temperature [°C] ', 'Station humidity [%]', 'Station pm10 [µg/m^3]',
+                              'Station pm2.5 [µg/m^3]', 'Public station temperature [°C]', 'Public station humidity [%]', 'Public station pm10 [µg/m^3]', 'Public station pm2.5 [µg/m^3]'])
 
     for x in range(measurements_rate):
 
@@ -187,22 +215,27 @@ with open('measures_file.csv', mode='w') as measures_file:
                         r = requests.get(airly_api_url.format(
                             city_latitude, city_longitude)).json()
 
-                        pollution_city = {
-                            'id': "city.id",
-                            'city_name': "city.city_name",
-                            'city_latitude': city_latitude,
-                            'city_longitude': city_longitude,
-                            'temperature': r['current']['values'][5]['value'],
-                            'humidity': r['current']['values'][4]['value'],
-                            'pm2_5': r['current']['values'][1]['value'],
-                            'pm10': r['current']['values'][2]['value'],
+                        try:
+                            humidity, temperature = get_DHT11()  # unpacking tuple
+                            print('Humidity and temp:', humidity, temperature)
+                        except:
+                            print(
+                                "An exception occurred with reading humidity and temperature with DHT11")
+                            humidity = 55
+                            temperature = 25
 
-                            'description': r['current']['indexes'][0]['description'],
-                            'color': r['current']['indexes'][0]['color'],
-                        }
+                        now = datetime.now()
+                        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+                        pub_temperature = r['current']['values'][5]['value']
+                        pub_humidity = r['current']['values'][4]['value']
+                        pub_pm2_5 = r['current']['values'][1]['value']
+                        pub_pm10 = r['current']['values'][2]['value']
+                        print("Public station values read: ",
+                              pub_temperature, pub_humidity, pub_pm2_5, pub_pm10)
 
                         measures_writer.writerow(
-                            [time_before_measurement, time_between_measurements, pm10, pm25, r['current']['values'][2]['value'], r['current']['values'][1]['value']])
+                            [dt_string, time_before_measurement, time_between_measurements, temperature, humidity, pm10, pm25, pub_temperature, pub_humidity, pub_pm10, pub_pm2_5, ])
 
                         break
                     print("Waited %d seconds, no values read, wait 0.5 seconds, and try to read again" % (

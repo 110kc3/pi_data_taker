@@ -124,69 +124,81 @@ print(sensor.reportmode)
 #             break
 
 sensor.reset()
+pm10 = 0
+pm25 = 0
 
-
-try:
-    # Example of switching the WorkState
-    print("\n%d X switching between measuring and sleeping mode:" % cycles)
-    print("\tMeasurement state: Read the values, on no read, wait 2 seconds and try again")
-    print("\tOn read success, put the mode into sleeping mode for 5 seconds, and loop again")
-    for a in range(cycles):
-        print("%d time: push it into wake state" % a)
-        sensor.workstate = SDS011.WorkStates.Measuring
-        # Just to demonstrate. Should be 60 seconds to get qualified values.
-        # The sensor needs to warm up!
-        time.sleep(10)
-        last = time.time()
-        while True:
-            last1 = time.time()
-            values = sensor.get_values()
-            if values is not None:
-                printValues(time.time() - last, values, sensor.unit_of_measure)
-                break
-            print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
-                time.time() - last1))
+with open('measures_file.csv', mode='w') as measures_file:
+    measures_writer = csv.writer(
+        measures_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    measures_writer.writerow(['Time', 'pm10', 'pm25', unit_of_measure])
+    try:
+        # Example of switching the WorkState
+        print("\n%d X switching between measuring and sleeping mode:" % cycles)
+        print(
+            "\tMeasurement state: Read the values, on no read, wait 2 seconds and try again")
+        print("\tOn read success, put the mode into sleeping mode for 5 seconds, and loop again")
+        for a in range(cycles):
+            print("%d time: push it into wake state" % a)
+            sensor.workstate = SDS011.WorkStates.Measuring
+            # Just to demonstrate. Should be 60 seconds to get qualified values.
+            # The sensor needs to warm up!
             time.sleep(2)
-        print("Read was succesfull. Going to sleep for 5 seconds")
+            last = time.time()
+            while True:
+                last1 = time.time()
+                values = sensor.get_values()
+                if values is not None:
+                    printValues(time.time() - last, values,
+                                sensor.unit_of_measure)
+                    pm10, pm25 = values
+
+                    measures_writer.writerow(
+                        [time.time() - last, pm10, pm25, sensor.unit_of_measure])
+
+                    break
+                print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
+                    time.time() - last1))
+                time.sleep(0.5)
+            print("Read was succesfull. Going to sleep for 5 seconds")
+            sensor.workstate = SDS011.WorkStates.Sleeping
+            time.sleep(5)
+
+        # # Example of duty cycle
+        # DC = 2
+        # if len(sys.argv) > 2 and sys.argv[2].isdigit():
+        #     if int(sys.argv[2]) >= 0 and int(sys.argv[2]) < 30:
+        #         DC = int(sys.argv[2])
+        #     else:
+        #         print("Invalid duty cycle %s. Using 2 minutes" % sys.argv[2])
+        # print("\n%d X measurements with duty cycle of  %d minutes." % (cycles, DC))
+        # #sensor.workstate = SDS011.WorkStates.Measuring
+        # # Setting this to 0 means permanent measurement for once each second
+        # # sensor.dutycycle = DC  # valid values between 0 and 30
+        # print("Waiting time: at most {0} minutes before the measurement.".format(
+        #     sensor.dutycycle))
+        # for a in range(cycles):
+        #     print("Duty cycle measurement nr {0}.".format(a))
+        #     sensor.workstate = SDS011.WorkStates.Measuring
+        #     sensor.dutycycle = DC  # valid values between 0 and 30
+        #     last = time.time()
+        #     while True:
+        #         last1 = time.time()
+        #         values = sensor.get_values()
+        #         if values is not None:
+        #             printValues(time.time() - last, values, sensor.unit_of_measure)
+        #             break
+        #         print("Waited %d secs, no values read, we try again" %
+        #               (time.time() - last1))
+        #     sensor.workstate = SDS011.WorkStates.Sleeping
+        #     print("Read was succesfull. Going to sleep for 5 seconds")
+        #     time.sleep(10)
+
         sensor.workstate = SDS011.WorkStates.Sleeping
-        time.sleep(5)
 
-    # Example of duty cycle
-    DC = 2
-    if len(sys.argv) > 2 and sys.argv[2].isdigit():
-        if int(sys.argv[2]) >= 0 and int(sys.argv[2]) < 30:
-            DC = int(sys.argv[2])
-        else:
-            print("Invalid duty cycle %s. Using 2 minutes" % sys.argv[2])
-    print("\n%d X measurements with duty cycle of  %d minutes." % (cycles, DC))
-    #sensor.workstate = SDS011.WorkStates.Measuring
-    # Setting this to 0 means permanent measurement for once each second
-    # sensor.dutycycle = DC  # valid values between 0 and 30
-    print("Waiting time: at most {0} minutes before the measurement.".format(
-        sensor.dutycycle))
-    for a in range(cycles):
-        print("Duty cycle measurement nr {0}.".format(a))
-        sensor.workstate = SDS011.WorkStates.Measuring
-        sensor.dutycycle = DC  # valid values between 0 and 30
-        last = time.time()
-        while True:
-            last1 = time.time()
-            values = sensor.get_values()
-            if values is not None:
-                printValues(time.time() - last, values, sensor.unit_of_measure)
-                break
-            print("Waited %d secs, no values read, we try again" %
-                  (time.time() - last1))
-        sensor.workstate = SDS011.WorkStates.Sleeping
-        print("Read was succesfull. Going to sleep for 5 seconds")
-        time.sleep(10)
-
-    sensor.workstate = SDS011.WorkStates.Sleeping
-
-    # # end of test
-    # print("\nSensor reset to normal")
-    # sensor.reset()
-    # sensor = None
+        # # end of test
+        # print("\nSensor reset to normal")
+        # sensor.reset()
+        # sensor = None
 except KeyboardInterrupt:
     sensor.reset()
     sensor = None

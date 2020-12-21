@@ -174,13 +174,13 @@ with open('measures_file.csv', mode='w') as measures_file:
                             [time_before_measurement, time_between_measurements, pm10, pm25, ])
 
                         break
-                    print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
+                    print("Waited %d seconds, no values read, wait 0.5 seconds, and try to read again" % (
                         time.time() - last1))
                     time.sleep(0.5)
-                print("Read was succesfull. Going to sleep for " +
-                      time_between_measurements+" seconds",)
+                print("Read was succesfull. Going to sleep for {} seconds".format(
+                    time_between_measurements))
                 sensor.workstate = SDS011.WorkStates.Sleeping
-                time.sleep(time_between_measurements-0.5)
+                time.sleep(time_between_measurements)
 
         # sensor.workstate = SDS011.WorkStates.Sleeping
 

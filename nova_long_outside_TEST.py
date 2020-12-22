@@ -231,12 +231,23 @@ with open('measures_file.csv', mode='w') as measures_file:
                 "\tOn read success, put the mode into sleeping mode for {} seconds, and loop again".format(time_before_measurement))
             for a in range(cycles):
                 print("%d time: push it into wake state" % a)
+
+                # get DHT22
+                try:
+                    humidity22, temperature22 = get_DHT22()  # unpacking tuple
+                except:
+                    print(
+                        "An exception occurred with reading humidity and temperature with DHT22")
+                    humidity22 = 0
+                    temperature22 = 0
+
                 sensor.workstate = SDS011.WorkStates.Measuring
                 # Just to demonstrate. Should be 60 seconds to get qualified values.
                 # The sensor needs to warm up!
                 time.sleep(time_before_measurement)
                 last = time.time()
                 while True:
+
                     last1 = time.time()
                     values = sensor.get_values()
                     if values is not None:
@@ -261,14 +272,6 @@ with open('measures_file.csv', mode='w') as measures_file:
                             pub_pm2_5 = 0
                             pub_pm10 = 0
 
-                        # get DHT22
-                        try:
-                            humidity22, temperature22 = get_DHT22()  # unpacking tuple
-                        except:
-                            print(
-                                "An exception occurred with reading humidity and temperature with DHT22")
-                            humidity22 = 0
-                            temperature22 = 0
                         # # get DHT11
                         # try:
                         #     humidity11, temperature11 = get_DHT11()  # unpacking tuple

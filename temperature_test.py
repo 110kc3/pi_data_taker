@@ -78,7 +78,7 @@ time_between_measurements = 0
 
 measurements_rate = 6
 
-
+cycles = 3
 pub_temperature = 0
 pub_humidity = 0
 pub_pm2_5 = 0

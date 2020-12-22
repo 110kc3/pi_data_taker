@@ -41,6 +41,13 @@ DHT11Sensor = Adafruit_DHT.DHT11
 GPIO_DHT11_Pin = 27  # look at output of "python3 pinout" command
 
 
+# Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
+DHT22Sensor = Adafruit_DHT.DHT22
+
+# The pin which is connected with the sensor will be declared here
+GPIO_DHT22_Pin = 22  # look at output of "python3 pinout" command
+
+
 def get_DHT11():
     humidity11, temperature11 = Adafruit_DHT.read(DHT11Sensor, GPIO_DHT11_Pin)
     if humidity11 is not None and temperature11 is not None:
@@ -50,13 +57,6 @@ def get_DHT11():
         return humidity11, temperature11
     else:
         print("Sensor failure...")
-
-
-# Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
-DHT22Sensor = Adafruit_DHT.DHT22
-
-# The pin which is connected with the sensor will be declared here
-GPIO_DHT22_Pin = 22  # look at output of "python3 pinout" command
 
 
 def get_DHT22():
@@ -146,8 +146,11 @@ airly_api_url = 'https://airapi.airly.eu/v2/measurements/nearest?lat={}&lng={}&m
 
 
 # zwycięstwa 12 50.2948198207,18.6680904694
-city_latitude = 50.2948198207
-city_longitude = 18.6680904694
+
+
+# Norberta Barlickiego 50.298122,18.672529,i9861
+city_latitude = 50.298122
+city_longitude = 18.672529
 
 
 # simple parsing the command arguments for setting options
@@ -244,6 +247,7 @@ with open('measures_file.csv', mode='w') as measures_file:
                         try:
                             r = requests.get(airly_api_url.format(
                                 city_latitude, city_longitude)).json()
+
                             pub_temperature = r['current']['values'][5]['value']
                             pub_humidity = r['current']['values'][4]['value']
                             pub_pm2_5 = r['current']['values'][1]['value']
@@ -257,6 +261,14 @@ with open('measures_file.csv', mode='w') as measures_file:
                             pub_pm2_5 = 0
                             pub_pm10 = 0
 
+                        # get DHT22
+                        try:
+                            humidity22, temperature22 = get_DHT22()  # unpacking tuple
+                        except:
+                            print(
+                                "An exception occurred with reading humidity and temperature with DHT22")
+                            humidity22 = 0
+                            temperature22 = 0
                         # get DHT11
                         try:
                             humidity11, temperature11 = get_DHT11()  # unpacking tuple
@@ -266,14 +278,6 @@ with open('measures_file.csv', mode='w') as measures_file:
                                 "An exception occurred with reading humidity and temperature with DHT11")
                             humidity11 = 0
                             temperature11 = 0
-                        # get DHT22
-                        try:
-                            humidity22, temperature22 = get_DHT22()  # unpacking tuple
-                        except:
-                            print(
-                                "An exception occurred with reading humidity and temperature with DHT22")
-                            humidity22 = 0
-                            temperature22 = 0
 
                         now = datetime.now()
                         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")

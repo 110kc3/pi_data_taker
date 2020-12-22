@@ -11,7 +11,8 @@ GPIO_Pin = 22  # look at output of "python3 pinout" command
 while True:
     humidity, temperature = Adafruit_DHT.read(DHTSensor, GPIO_Pin)
     if humidity is not None and temperature is not None:
-        print("Temperature={}C  Humidity={}%".format(temperature, humidity))
+        print("Temperature={0:0.01f}C  Humidity={1:0.01f}%".format(
+            temperature, humidity))
     else:
         print("Sensor failure...")
     time.sleep(3)

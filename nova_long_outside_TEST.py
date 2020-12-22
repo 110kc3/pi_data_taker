@@ -62,7 +62,7 @@ GPIO_DHT22_Pin = 22  # look at output of "python3 pinout" command
 def get_DHT22():
     humidity22, temperature22 = Adafruit_DHT.read(DHT22Sensor, GPIO_DHT22_Pin)
     if humidity22 is not None and temperature is not None:
-        print("DHT22 Temperature={0:0.1f}C  Humidity={1:0.1f}%".format(
+        print("DHT22 Temperature={}C  Humidity={}%".format(
             temperature22, humidity22))
         time.sleep(0.3)
         return humidity22, temperature22
@@ -234,7 +234,9 @@ with open('measures_file.csv', mode='w') as measures_file:
 
                 # get DHT22
                 try:
-                    humidity22, temperature22 = get_DHT22()  # unpacking tuple
+                    # humidity22, temperature22 = get_DHT22()  # unpacking tuple
+                    humidity22, temperature22 = Adafruit_DHT.read(
+                        DHT22Sensor, GPIO_DHT22_Pin)
                 except:
                     print(
                         "An exception occurred with reading humidity and temperature with DHT22")

@@ -34,11 +34,11 @@ Look e.g. via lsusb command for Qin Hen Electronics USB id.
 # import RPi.GPIO as GPIO
 
 
-# Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
-DHT11Sensor = Adafruit_DHT.DHT11
+# # Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
+# DHT11Sensor = Adafruit_DHT.DHT11
 
-# The pin which is connected with the sensor will be declared here
-GPIO_DHT11_Pin = 27  # look at output of "python3 pinout" command
+# # The pin which is connected with the sensor will be declared here
+# GPIO_DHT11_Pin = 27  # look at output of "python3 pinout" command
 
 
 # Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
@@ -48,15 +48,15 @@ DHT22Sensor = Adafruit_DHT.DHT22
 GPIO_DHT22_Pin = 22  # look at output of "python3 pinout" command
 
 
-def get_DHT11():
-    humidity11, temperature11 = Adafruit_DHT.read(DHT11Sensor, GPIO_DHT11_Pin)
-    if humidity11 is not None and temperature11 is not None:
-        print("DHT11 Temperature={0:0.1f}C  Humidity={1:0.1f}%".format(
-            temperature11, humidity11))
-        time.sleep(0.3)
-        return humidity11, temperature11
-    else:
-        print("Sensor failure...")
+# def get_DHT11():
+#     humidity11, temperature11 = Adafruit_DHT.read(DHT11Sensor, GPIO_DHT11_Pin)
+#     if humidity11 is not None and temperature11 is not None:
+#         print("DHT11 Temperature={0:0.1f}C  Humidity={1:0.1f}%".format(
+#             temperature11, humidity11))
+#         time.sleep(0.3)
+#         return humidity11, temperature11
+#     else:
+#         print("Sensor failure...")
 
 
 def get_DHT22():
@@ -201,7 +201,7 @@ temperature22 = 0
 with open('measures_file.csv', mode='w') as measures_file:
     measures_writer = csv.writer(
         measures_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    measures_writer.writerow(['Time now', 'Time before measurement [s]', 'Time between measurements [s]', 'DTH11 temperature [°C] ', 'DTH11 humidity [%]', 'DTH22 temperature [°C] ', 'DTH22 humidity [%]',  'Station pm10 [µg/m^3]',
+    measures_writer.writerow(['Time now', 'Time before measurement [s]', 'Time between measurements [s]', 'DTH22 temperature [°C] ', 'DTH22 humidity [%]',  'Station pm10 [µg/m^3]',
                               'Station pm2.5 [µg/m^3]', 'Public station temperature [°C]', 'Public station humidity [%]', 'Public station pm10 [µg/m^3]', 'Public station pm2.5 [µg/m^3]'])
 
     for x in range(measurements_rate):
@@ -269,21 +269,21 @@ with open('measures_file.csv', mode='w') as measures_file:
                                 "An exception occurred with reading humidity and temperature with DHT22")
                             humidity22 = 0
                             temperature22 = 0
-                        # get DHT11
-                        try:
-                            humidity11, temperature11 = get_DHT11()  # unpacking tuple
+                        # # get DHT11
+                        # try:
+                        #     humidity11, temperature11 = get_DHT11()  # unpacking tuple
 
-                        except:
-                            print(
-                                "An exception occurred with reading humidity and temperature with DHT11")
-                            humidity11 = 0
-                            temperature11 = 0
+                        # except:
+                        #     print(
+                        #         "An exception occurred with reading humidity and temperature with DHT11")
+                        #     humidity11 = 0
+                        #     temperature11 = 0
 
                         now = datetime.now()
                         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
                         measures_writer.writerow(
-                            [dt_string, time_before_measurement, time_between_measurements, temperature11, humidity11, temperature22, humidity22, pm10, pm25, pub_temperature, pub_humidity, pub_pm10, pub_pm2_5, ])
+                            [dt_string, time_before_measurement, time_between_measurements, temperature22, humidity22, pm10, pm25, pub_temperature, pub_humidity, pub_pm10, pub_pm2_5, ])
 
                         break
                     print("Waited %d seconds, no values read, wait 0.5 seconds, and try to read again" % (

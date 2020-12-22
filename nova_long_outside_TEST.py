@@ -237,6 +237,7 @@ with open('measures_file.csv', mode='w') as measures_file:
                     # humidity22, temperature22 = get_DHT22()  # unpacking tuple
                     humidity22, temperature22 = Adafruit_DHT.read(
                         DHT22Sensor, GPIO_DHT22_Pin)
+                    print("DHT22 temp {} humid {} ".format(humidity22, temperature22)
                 except:
                     print(
                         "An exception occurred with reading humidity and temperature with DHT22")

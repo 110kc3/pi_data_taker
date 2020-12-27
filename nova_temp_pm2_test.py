@@ -139,8 +139,8 @@ def printValues(timing, values, unit_of_measure):
     # print("Values measured in pcs/0.01sqf: PM2.5 %d, PM10 %d" % (Mass2Con('pm25',values[1]), Mass2Con('pm10',values[0])))
 
 
-# pollution_API_key = 'uickU1nHiAR1KFq8pYndm3SPLhNSZUAj'
-pollution_API_key = 'aV4cM5PIhRFvnfP4tiN1Cx2TAa8s1sf0'
+# pollution_API_key = 'uickU1nHiAR1KFq8pYndm3SPLhNSZUAj' aV4cM5PIhRFvnfP4tiN1Cx2TAa8s1sf0
+pollution_API_key = 'uickU1nHiAR1KFq8pYndm3SPLhNSZUAj'
 
 airly_api_url = 'https://airapi.airly.eu/v2/measurements/nearest?lat={}&lng={}&maxDistanceKM=50&apikey=' + pollution_API_key
 

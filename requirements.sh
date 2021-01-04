@@ -44,15 +44,15 @@ sudo rm -rf /opt/pi_data_taker
 echo '###Creating new server files ..'
 sudo mkdir /opt/pi_data_taker
 sudo mkdir /opt/pi_data_taker/logs
-sudo cp -i $HOME/pi_data_taker/station_websocket.py /opt/pi_data_taker
-sudo cp -i $HOME/pi_data_taker/sds011.py /opt/pi_data_taker
+sudo cp -i ./pi_data_taker/station_websocket.py /opt/pi_data_taker
+sudo cp -i ./pi_data_taker/sds011.py /opt/pi_data_taker
 # changing permissions
 echo '###Changing server files permissions ..'
 sudo chmod 777 /opt/pi_data_taker /opt/pi_data_taker/station_websocket.py /opt/pi_data_taker/sds011.py
 
 # adding to autostart - with solution not to allow entries to be added twice
 echo '###Adding to autostart ..'
-(crontab -l ; echo "@reboot nohup python3 /opt/pi_data_taker/station_websocket.py > /opt/pi_data_taker/logs/station_log.log &") | sort - | uniq - | crontab -
+(crontab -l ; echo "@reboot nohup python3 /opt/pi_data_taker/station_websocket.py > /opt/pi_data_taker/logs/station.log &") | sort - | uniq - | crontab -
 
 
 # restarting station

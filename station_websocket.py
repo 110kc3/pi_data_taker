@@ -19,7 +19,7 @@ import time
 DHTSensor = Adafruit_DHT.DHT22
 
 # The pin which is connected with the dht11 sensor will be declared here
-GPIO_DHT_Pin = 27  # look at output of "python3 pinout" command
+GPIO_DHT_Pin = 22  # look at output of "python3 pinout" command
 
 
 def get_DHT22():

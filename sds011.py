@@ -17,20 +17,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with SDS011.  If not, see <http://www.gnu.org/licenses/>.
 
-Diese Datei ist Teil von SDS011.
-
-SDS011 ist Freie Software: Sie können es unter den Bedingungen
-der GNU General Public License, wie von der Free Software Foundation,
-Version 3 der Lizenz oder (nach Ihrer Wahl) jeder späteren
-veröffentlichten Version, weiterverbreiten und/oder modifizieren.
-
-SDS011 wird in der Hoffnung, dass es nützlich sein wird, aber
-OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite
-Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK.
-Siehe die GNU General Public License für weitere Details.
-
-Sie sollten eine Kopie der GNU General Public License zusammen mit SDS011
-erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
 """
 
 """
@@ -41,14 +27,15 @@ the sds011 particle matter sensor from Nova using the HL-340-serial TTL USB adap
 # this module has been updated by Teus Hagen May 2017
 # all errors introduced with this update come from teus
 
+
+
+
 from enum import IntEnum
 import logging
 import time
 import struct
 import serial
 import math
-
-
 class SDS011(object):
     """Class representing the SD011 dust sensor and its methods.
         The device_path on Win is one of your COM ports,
@@ -137,7 +124,8 @@ class SDS011(object):
         The device_path on Win is one of your COM ports.
         On Linux one of "/dev/ttyUSB..." or "/dev/ttyAMA..."
         '''
-        logging.info("Start of SDS011 constructor. The device_path: %s", device_path)
+        logging.info(
+            "Start of SDS011 constructor. The device_path: %s", device_path)
         self.__timeout = 2
         if 'timeout' in args.keys():            # serial line read timeout
             self.__timeout = int(args['timeout'])
@@ -146,7 +134,8 @@ class SDS011(object):
             if isinstance(args['unit_of_measure'], self.UnitsOfMeasure):
                 self.__unit_of_measure = args['unit_of_measure']
             else:
-                raise ValueError("unit_of_measure give is not of type SDS011.UnitOfMeasure.")
+                raise ValueError(
+                    "unit_of_measure give is not of type SDS011.UnitOfMeasure.")
         self.__device_path = device_path
         self.device = None
         try:
@@ -178,9 +167,9 @@ class SDS011(object):
         if len(first_response) == 0:
             # Device might be sleeping. So wake it up
             logging.warning("SDS011: While constructing the instance "
-                     "the sensor is not responding. \n"
-                     "Maybe in sleeping, in passive mode, or in a "
-                     "duty cycle? Will wake it up.")
+                            "the sensor is not responding. \n"
+                            "Maybe in sleeping, in passive mode, or in a "
+                            "duty cycle? Will wake it up.")
             self.__send(self.Command.WorkState,
                         self.__construct_data(self.CommandMode.Setting,
                                               self.WorkStates.Measuring))
@@ -289,7 +278,8 @@ class SDS011(object):
             # Calculate new timeout value
             self.__read_timeout = self.__calculate_read_timeout(value)
             self.__dutycycle_start = time.time()
-            logging.info("SDS011 set duty cycle timeout: %s", self.__read_timeout)
+            logging.info("SDS011 set duty cycle timeout: %s",
+                         self.__read_timeout)
             logging.info("SDS011 set Duty cycle: %s", value)
             self.__get_current_config()
         else:
@@ -309,6 +299,7 @@ class SDS011(object):
     def unit_of_measure(self):
         """The unit of measure the sensor returns the values"""
         return self.__unit_of_measure
+
     @property
     def timeout(self):
         return self.__timeout
@@ -326,7 +317,7 @@ class SDS011(object):
         retval.append(cmdmode)
         retval.append(cmdvalue)
         logging.log(16, "SDS011 data %s for commandmode %s constructed.",
-                      cmdvalue, cmdmode)
+                    cmdvalue, cmdmode)
         return retval
 
     def __get_current_config(self):
@@ -369,7 +360,7 @@ class SDS011(object):
         newtimeout = 60 * timeoutvalue + \
             self.__read_timeout_drift_percent / 100 * 60 * timeoutvalue
         logging.log(18, "SDS011 timeout calculated for %s: %s",
-                     timeoutvalue, newtimeout)
+                    timeoutvalue, newtimeout)
         return newtimeout
 
     def get_values(self):
@@ -389,7 +380,7 @@ class SDS011(object):
             response_data = self.__response()
             if len(response_data) > 0:
                 logging.info(
-                "SDS011 received response from sensor %d bytes.", len(response_data))
+                    "SDS011 received response from sensor %d bytes.", len(response_data))
             return self.__extract_values_from_response(response_data)
         raise IOError(
             "SDS011 No data within read timeout of %d has been received." % self.__read_timeout)
@@ -420,7 +411,7 @@ class SDS011(object):
     def __send(self, command, data):
         '''The method for sending commands to the sensor and returning the response'''
         logging.log(16, "SDS011 send() entered with command %s and data %s.",
-                      command.name, data)
+                    command.name, data)
         # Proof the input
         if not isinstance(command, self.Command):
             raise TypeError("The command must be of type SDS011.Command")
@@ -448,7 +439,8 @@ class SDS011(object):
         # and append the terminator for serial sent
         bytes_to_send.append(self.__SerialEnd)
 
-        logging.log(16, "SDS011 sending: %s", "".join("%02x:" % b for b in bytes_to_send))
+        logging.log(16, "SDS011 sending: %s", "".join(
+            "%02x:" % b for b in bytes_to_send))
         # send the command
         written_bytes = self.device.write(bytes_to_send)
         self.device.flush()
@@ -456,11 +448,13 @@ class SDS011(object):
             raise IOError("SDS011 Not all bytes written")
         #self.__debugprt(3,"Sended and flushed: %s" % bytes_to_send)
         if len(bytes_to_send) != 19:
-            logging.info("SDS011 sent: %d bytes, expected 19.", len(bytes_to_send))
+            logging.info("SDS011 sent: %d bytes, expected 19.",
+                         len(bytes_to_send))
         # check the receive value
         received = self.__response(command)
         if len(received) != 10:
-            logging.info("SDS011 received: %d bytes, expected 10.", len(received))
+            logging.info(
+                "SDS011 received: %d bytes, expected 10.", len(received))
         if len(received) == 0:
             raise IOError("SDS011 sensor is not responding.")
         # when no command or command is request command,
@@ -481,7 +475,8 @@ class SDS011(object):
             returnvalue = received
         # return just the received data. Further evaluation of data outsite
         # this  function
-        logging.log(18, "Leaving send() normal and returning %s", "".join("%02x:" % b for b in received[3: -2]))
+        logging.log(18, "Leaving send() normal and returning %s",
+                    "".join("%02x:" % b for b in received[3: -2]))
         return returnvalue
 
     def __response(self, command=None):
@@ -510,10 +505,11 @@ class SDS011(object):
             else:
                 if self.__dutycycle == 0:
                     logging.error("SDS011 A sensor response has not arrived within timeout limit. "
-                             "If the sensor is in sleeping mode wake it up first!"
-                             " Returning an empty byte array as response!")
+                                  "If the sensor is in sleeping mode wake it up first!"
+                                  " Returning an empty byte array as response!")
                 else:
-                    logging.info("SDS011 no response. Expected while in dutycycle.")
+                    logging.info(
+                        "SDS011 no response. Expected while in dutycycle.")
                 return bytearray()
 
         thebytes = struct.unpack('BBBBBBBB', self.device.read(8))
@@ -527,7 +523,8 @@ class SDS011(object):
                     to the previous command: \"{1}\"".format(bytes_received[2], command.name))
         if command is None or command is self.Command.Request:
             if bytes_received[1] is not self.__ReceiveByte:
-                raise IOError("SDS011 Received byte not found on the Value Request.")
+                raise IOError(
+                    "SDS011 Received byte not found on the Value Request.")
         # check checksum
         if self.__checksum_make(bytes_received[0:-2]) != bytes_received[-2]:
             raise IOError("SDS011 Checksum of received data is invalid.")

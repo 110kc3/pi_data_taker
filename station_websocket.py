@@ -27,7 +27,6 @@ def get_DHT22():
     if humidity is not None and temperature is not None:
         print("Temperature={0:0.001f}C  Humidity={1:0.001f}%".format(
             temperature, humidity))
-        time.sleep(0.3)
         return humidity, temperature
     else:
         print("Sensor failure...")
@@ -86,6 +85,23 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             message = self.headers['user-agent']
 
         if self.path == '/data':
+
+            try:
+                humidity, temperature = get_DHT22()  # unpacking tuple
+
+                if humidity is not None and temperature is not None:
+                    print("Temperature={0:0.001f}C  Humidity={1:0.001f}%".format(
+                        temperature, humidity))
+                else:
+                    humidity, temperature = get_DHT22()
+                    print("Temperature={0:0.001f}C  Humidity={1:0.001f}%".format(
+                        temperature, humidity))
+            except:
+                print(
+                    "An exception occurred with reading humidity and temperature with DHT22")
+                humidity = 0
+                temperature = 0
+
             # simple parsing the command arguments for setting options
             # Create an instance of your sensor
             # options defaults: logging None, debug level 0, serial line timeout 2
@@ -145,15 +161,6 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 sensor.reset()
                 sensor = None
                 sys.exit("Nova Sensor reset due to a KeyboardInterrupt")
-
-            try:
-                humidity, temperature = get_DHT22()  # unpacking tuple
-                print('Humidity and temp:', humidity, temperature)
-            except:
-                print(
-                    "An exception occurred with reading humidity and temperature with DHT22")
-                humidity = 0
-                temperature = 0
 
             color = "#00E400"
             description = "Good"

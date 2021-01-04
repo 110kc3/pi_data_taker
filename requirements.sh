@@ -26,5 +26,12 @@ sudo apt-get install git -y
 
 # Python #
 
+sudo apt-get install python3-pip -y
 
 
+pip3 --version
+
+
+# python modules
+
+pip3 install pyserial Adafruit_DHT

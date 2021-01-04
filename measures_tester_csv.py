@@ -12,11 +12,16 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 '''
+import Adafruit_DHT
 import sys
 import time
 from sds011 import SDS011
 import csv
-# Create a new sensor instance
+import requests
+
+from datetime import datetime
+import json
+
 
 '''
 On Win, the path is one of the com ports. On Linux / Raspberry Pi
@@ -26,6 +31,44 @@ Have a look at Win or Linux documentation.
 Look e.g. via lsusb command for Qin Hen Electronics USB id.
 '''
 
+# import RPi.GPIO as GPIO
+
+
+# # Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
+# DHT11Sensor = Adafruit_DHT.DHT11
+
+# # The pin which is connected with the sensor will be declared here
+# GPIO_DHT11_Pin = 27  # look at output of "python3 pinout" command
+
+
+# Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
+DHT22Sensor = Adafruit_DHT.DHT22
+
+# The pin which is connected with the sensor will be declared here
+GPIO_DHT22_Pin = 22  # look at output of "python3 pinout" command
+
+
+# def get_DHT11():
+#     humidity11, temperature11 = Adafruit_DHT.read(DHT11Sensor, GPIO_DHT11_Pin)
+#     if humidity11 is not None and temperature11 is not None:
+#         print("DHT11 Temperature={0:0.1f}C  Humidity={1:0.1f}%".format(
+#             temperature11, humidity11))
+#         time.sleep(0.3)
+#         return humidity11, temperature11
+#     else:
+#         print("Sensor failure...")
+
+
+def get_DHT22():
+    humidity22, temperature22 = Adafruit_DHT.read(DHT22Sensor, GPIO_DHT22_Pin)
+    if humidity22 is not None and temperature is not None:
+        print("DHT22 Temperature={}C  Humidity={}%".format(
+            temperature22, humidity22))
+        time.sleep(0.3)
+        return humidity22, temperature22
+    else:
+        print("Sensor failure...")
+
 
 def printlog(level, string):
     """Change this to reflect the way logging is done."""
@@ -33,7 +76,7 @@ def printlog(level, string):
 
 
 debug = 0       # debug level in sds011 class module
-cycles = 3      # serial read timeout in seconds, dflt 2
+cycles = 5     # serial read timeout in seconds, dflt 2
 timeout = 2     # timeout on serial line read
 # print values in mass or pieces
 unit_of_measure = SDS011.UnitsOfMeasure.MassConcentrationEuropean
@@ -91,9 +134,23 @@ def printValues(timing, values, unit_of_measure):
         unit = 'µg/m³'
     else:
         unit = 'pcs/0.01cft'
-    print("Waited %d secs\nValues measured in %s:    PM2.5  " %
+    print("Waited %d secs Values measured in %s:    PM2.5  " %
           (timing, unit), values[1], ", PM10 ", values[0])
     # print("Values measured in pcs/0.01sqf: PM2.5 %d, PM10 %d" % (Mass2Con('pm25',values[1]), Mass2Con('pm10',values[0])))
+
+
+# pollution_API_key = 'uickU1nHiAR1KFq8pYndm3SPLhNSZUAj' aV4cM5PIhRFvnfP4tiN1Cx2TAa8s1sf0
+pollution_API_key = 'uickU1nHiAR1KFq8pYndm3SPLhNSZUAj'
+
+airly_api_url = 'https://airapi.airly.eu/v2/measurements/nearest?lat={}&lng={}&maxDistanceKM=50&apikey=' + pollution_API_key
+
+
+# zwycięstwa 12 50.2948198207,18.6680904694
+
+
+# Norberta Barlickiego 50.298122,18.672529,i9861
+city_latitude = 50.289934
+city_longitude = 18.659788
 
 
 # simple parsing the command arguments for setting options
@@ -130,39 +187,71 @@ time_before_measurement = 0
 time_between_measurements = 0
 
 
-measurements_rate = 6
+measurements_rate = 20
 
+
+pub_temperature = 0
+pub_humidity = 0
+pub_pm2_5 = 0
+pub_pm10 = 0
+humidity11 = 0
+temperature11 = 0
+humidity22 = 0
+temperature22 = 0
 with open('measures_file.csv', mode='w') as measures_file:
     measures_writer = csv.writer(
         measures_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    measures_writer.writerow(['Time before measurement [s]',
-                              'Time between measurements [s]',  'pm10 [µg/m^3]', 'pm2.5 [µg/m^3]'])
+    measures_writer.writerow(['Time now', 'Time before measurement [s]', 'Time between measurements [s]', 'DTH22 temperature [°C] ', 'DTH22 humidity [%]',  'Station pm10 [µg/m^3]',
+                              'Station pm2.5 [µg/m^3]', 'Public station temperature [°C]', 'Public station humidity [%]', 'Public station pm10 [µg/m^3]', 'Public station pm2.5 [µg/m^3]'])
 
     for x in range(measurements_rate):
 
-        time_before_measurement = (x+1)*2.5
-        if x == 4:
-            time_before_measurement = (x+1)*5
-        if x == 5:
-            time_before_measurement = (x+1)*10
-        if x == 6:
-            time_before_measurement = (x+1)*20
-        time_between_measurements = 120
+        time_before_measurement = 10
+        time_between_measurements = 1
+
+        # if x == 1:
+        #     time_before_measurement = 5
+        # if x == 2:
+        #     time_before_measurement = 7.5
+        # if x == 3:
+        #     time_before_measurement = 10
+        # if x == 4:
+        #     time_before_measurement = 2.5
+        #     time_between_measurements = 1
+        # if x == 5:
+        #     time_before_measurement = 1
+        #     time_between_measurements = 1
+
         try:
 
             print("\n%d X switching between measuring and sleeping mode:" % cycles)
             print(
                 "\tMeasurement state: Read the values, on no read, wait 2 seconds and try again")
             print(
-                "\tOn read success, put the mode into sleeping mode for 5 seconds, and loop again")
+                "\tOn read success, put the mode into sleeping mode for {} seconds, and loop again".format(time_before_measurement))
             for a in range(cycles):
                 print("%d time: push it into wake state" % a)
+
+                # get DHT22
+                try:
+                    # humidity22, temperature22 = get_DHT22()  # unpacking tuple
+                    humidity22, temperature22 = Adafruit_DHT.read(
+                        DHT22Sensor, GPIO_DHT22_Pin)
+                    print("DHT22 temp {} humid {} ".format(
+                        humidity22, temperature22))
+                except:
+                    print(
+                        "An exception occurred with reading humidity and temperature with DHT22")
+                    humidity22 = 0
+                    temperature22 = 0
+
                 sensor.workstate = SDS011.WorkStates.Measuring
                 # Just to demonstrate. Should be 60 seconds to get qualified values.
                 # The sensor needs to warm up!
                 time.sleep(time_before_measurement)
                 last = time.time()
                 while True:
+
                     last1 = time.time()
                     values = sensor.get_values()
                     if values is not None:
@@ -170,8 +259,28 @@ with open('measures_file.csv', mode='w') as measures_file:
                                     sensor.unit_of_measure)
                         pm10, pm25 = values
 
+                        try:
+                            r = requests.get(airly_api_url.format(
+                                city_latitude, city_longitude)).json()
+
+                            pub_temperature = r['current']['values'][5]['value']
+                            pub_humidity = r['current']['values'][4]['value']
+                            pub_pm2_5 = r['current']['values'][1]['value']
+                            pub_pm10 = r['current']['values'][2]['value']
+                            print("Public station values read: ",
+                                  pub_temperature, pub_humidity, pub_pm2_5, pub_pm10)
+                        except:
+                            print("error accessing station data")
+                            pub_temperature = 0
+                            pub_humidity = 0
+                            pub_pm2_5 = 0
+                            pub_pm10 = 0
+
+                        now = datetime.now()
+                        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
                         measures_writer.writerow(
-                            [time_before_measurement, time_between_measurements, pm10, pm25, ])
+                            [dt_string, time_before_measurement, time_between_measurements, temperature22, humidity22, pm10, pm25, pub_temperature, pub_humidity, pub_pm10, pub_pm2_5, ])
 
                         break
                     print("Waited %d seconds, no values read, wait 0.5 seconds, and try to read again" % (

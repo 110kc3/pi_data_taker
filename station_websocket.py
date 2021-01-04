@@ -14,18 +14,18 @@ import Adafruit_DHT
 import time
 
 
-# DTH11 SENSOR
+# DTH22 SENSOR
 # Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
-DHTSensor = Adafruit_DHT.DHT11
+DHTSensor = Adafruit_DHT.DHT22
 
 # The pin which is connected with the dht11 sensor will be declared here
 GPIO_DHT_Pin = 27  # look at output of "python3 pinout" command
 
 
-def get_DHT11():
+def get_DHT22():
     humidity, temperature = Adafruit_DHT.read(DHTSensor, GPIO_DHT_Pin)
     if humidity is not None and temperature is not None:
-        print("Temperature={0:0.1f}C  Humidity={1:0.1f}%".format(
+        print("Temperature={0:0.001f}C  Humidity={1:0.001f}%".format(
             temperature, humidity))
         time.sleep(0.3)
         return humidity, temperature
@@ -111,9 +111,8 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 for a in range(cycles):
                     print("%d time: push it into wake state" % a)
                     sensor.workstate = SDS011.WorkStates.Measuring
-                    # Just to demonstrate. Should be 60 seconds to get qualified values.
                     # The sensor needs to warm up!
-                    time.sleep(10)
+                    time.sleep(8)
                     last = time.time()
                     while True:
                         last1 = time.time()
@@ -127,13 +126,13 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                             break
                         print("Waited %d seconds, no values read, wait 2 seconds, and try to read again" % (
                             time.time() - last1))
-                        time.sleep(2)
+                        time.sleep(1)
 
                     print('pm25 and pm10: ', pm25, pm10)
 
                     print('\nSetting sensor to sleep mode cuz running fan annoys me')
                     sensor.workstate = SDS011.WorkStates.Sleeping
-                    time.sleep(0.5)
+                    time.sleep(0.3)
 
                 # # end of test
                 # print("\nSensor reset to normal")
@@ -148,13 +147,13 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                 sys.exit("Nova Sensor reset due to a KeyboardInterrupt")
 
             try:
-                humidity, temperature = get_DHT11()  # unpacking tuple
+                humidity, temperature = get_DHT22()  # unpacking tuple
                 print('Humidity and temp:', humidity, temperature)
             except:
                 print(
-                    "An exception occurred with reading humidity and temperature with DHT11")
-                humidity = 55
-                temperature = 25
+                    "An exception occurred with reading humidity and temperature with DHT22")
+                humidity = 0
+                temperature = 0
 
             color = "#00E400"
             description = "Good"
@@ -198,7 +197,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                     "values": [
                         {
                             "name": "PM1",
-                            "value": 10
+                            "value": 0
                         },
                         {
                             "value": pm25,
@@ -209,7 +208,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
                             "name": "PM10"
                         },
                         {
-                            "value": 1000,
+                            "value": 0,
                             "name": "PRESSURE"
                         },
                         {

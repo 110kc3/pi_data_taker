@@ -1,4 +1,13 @@
 #!/bin/env python
+'''
+SDS011 library Copyright 2016, Frank Heuer, Germany
+Server code by Kamil Choiński, Copyright 2020
+
+This is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+'''
 import sys
 import signal
 import http.server
@@ -75,7 +84,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
 
         # message in json to send when gotten GET request
         message = {
-            "response": "successul",
+            "response": "successful",
         }
         self.send_response(200)
 
@@ -241,7 +250,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
         return
 
 
-# Reading portnumber from command line
+# Reading port number from command line
 if sys.argv[1:]:
     port = int(sys.argv[1])
 else:

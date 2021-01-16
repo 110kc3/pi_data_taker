@@ -1,21 +1,23 @@
-# pi_data_taker
+# Pi data taker
 This repo is executive part of Weather station management system - API is from https://github.com/110kc3/python_weather_api
+It requires connected Nova SDS011 and DHT22 (or DHT11) sensor to Raspberry Pi board.
 
+## Instaling
+Application can be set up with the usage of requirements.sh script that installs required programs, libraries 
+and sets up autostart of the program at start of the Raspberry Pi.
 
-
+The listening port is set up on localhost:8082 but it can be changed in station_websocket.py file.
 
 When successfully requested data from the websocket you will get 200 response status code
-        message = {
-            "response": "successful",
-        }
-        self.send_response(200)
+with "response": "successful",
 
-        #answers with localhost:port/agent
-        if self.path == '/agent':
-            message = self.headers['user-agent']
+Server respons to following endpoints:
+/agent
+message = self.headers['user-agent']
 
-        if self.path == '/data':
-            #JSON response with station data
+/data
+#JSON response with station data
+            
 			
 			
 ## License

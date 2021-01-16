@@ -12,11 +12,12 @@ When successfully requested data from the websocket you will get 200 response st
 with "response": "successful",
 
 Server respons to following endpoints:
-/agent
-message = self.headers['user-agent']
 
-/data
-#JSON response with station data
+/data - JSON response with station data
+
+/agent - user-agent data
+
+
             
 			
 			

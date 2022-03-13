@@ -1,8 +1,21 @@
-# Pi data taker
+
+## Table of contents
+* [General info](#general-info)
+* [Technologies](#technologies)
+* [Setup](#setup)
+* [License](#license)
+
+## General info
 This repo is executive part of Weather station management system - API is from https://github.com/110kc3/python_weather_api
 It requires connected Nova SDS011 and DHT22 (or DHT11) sensor to Raspberry Pi board.
 
-## Instaling
+## Technologies
+Project is created with:
+* Python version: 3
+* pyserial library 
+* Adafruit_DHT library 
+
+## Setup
 Application can be set up with the usage of requirements.sh script that installs required programs, libraries 
 and sets up autostart of the program at start of the Raspberry Pi.
 
@@ -11,15 +24,26 @@ The listening port is set up on localhost:8082 but it can be changed in station_
 When successfully requested data from the websocket you will get 200 response status code
 with "response": "successful",
 
-Server respons to following endpoints:
+The server responds to the following endpoints:
+```
+$ /data - JSON response with station data
+$ /agent - user-agent data
+```
 
-/data - JSON response with station data
+All setup can be done with below command
+```
+$ sudo ./requirements.sh
+```
 
-/agent - user-agent data
+requirements.sh script was created in order for the end user to have easier time installing measurement station
+Script does bellow things in order: 
+- updates your Raspberry Pi software
+- installs required libriaries and programs
+- sets up autostart of the measurement station server
 
+## Components physical setup    
+![image](https://user-images.githubusercontent.com/35073233/158072783-6c1a213a-f318-42a1-aea2-a9d1d541dced.png)
 
-            
-			
 			
 ## License
 SDS011 library by Frank Heuer https://gitlab.com/frankrich/sds011_particle_sensor
